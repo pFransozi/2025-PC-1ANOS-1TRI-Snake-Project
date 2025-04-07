@@ -1,6 +1,6 @@
 
-// Etapa 3
-// Adicionando controle à cobra com as setas do teclado
+// Etapa 4
+// Adicionando alimento à cobra. Cada alimento fica em uma posição diferente
 
 // determina o tamanho de cada parte do grid
 let resolucao = 20;
@@ -16,6 +16,8 @@ let dir = {
   y:0
 }
 
+let food;
+
 function setup() {
   createCanvas(600, 400);
   //modifica a quantidade de frames que são desenhados na função draw()
@@ -26,6 +28,14 @@ function setup() {
     x:10, //posição inicial horizontal
     y:10 //posição inicial vertical
   };
+
+  foodLocalizacao();
+}
+
+function foodLocalizacao(){
+  food = { x: floor(random(width / resolucao)) //posicao horizontal. utiliza a largura do canvas / 
+    , y: floor(random(height / resolucao)) }; //posicao vertical
+
 }
 
 //função para modificar a direção do movimento
@@ -39,6 +49,11 @@ function keyPressed(){
 
 function draw() {
   background(220);
+
+  // caso a posicao da cobra e da comida sejam a mesma, cria um novo alimento;
+  if (snake.x === food.x && snake.y === food.y) {
+    foodLocalizacao();
+  }
 
   //para ver o grid remova os comentários
   // //percorre a largura do canvas para criar as partes que compõem o grid
@@ -57,6 +72,13 @@ function draw() {
   snake.x += dir.x;
   //modifica a posição y da cobra
   snake.y += dir.y;
+
+  //muda a cor;
+  //fill(R, G, B)
+  fill(255, 0, 0);
+  //desenha o alimento baseada nos valoes de food.x e food.y e a resolucao;
+  //rect(x, y, width, height)
+  rect(food.x * resolucao, food.y * resolucao, resolucao, resolucao);
 
   //muda a cor;
   //fill(R, G, B)
