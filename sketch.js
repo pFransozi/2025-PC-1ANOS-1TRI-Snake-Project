@@ -1,10 +1,20 @@
 
-// Etapa 2
-// Criação de uma cobra movendo-se sem controles
+// Etapa 3
+// Adicionando controle à cobra com as setas do teclado
 
 // determina o tamanho de cada parte do grid
 let resolucao = 20;
 let snake;
+
+//será usado para indicar a direção de movimento da cobra
+// para a direita = dir = { x: 1, y: 0 };
+// para a esquerda = dir = { x: -1, y: 0 };
+// para cima = dir = { x: 0, y: -1 };
+// para baixo = dir = { x: 0, y: 1 };
+let dir = {
+  x:1,
+  y:0
+}
 
 function setup() {
   createCanvas(600, 400);
@@ -13,9 +23,18 @@ function setup() {
 
   //define a cobra do jogo
   snake = {
-    x:0, //posição inicial horizontal
-    y:0 //posição inicial vertical
+    x:10, //posição inicial horizontal
+    y:10 //posição inicial vertical
   };
+}
+
+//função para modificar a direção do movimento
+//baseada nas teclas pressionadas
+function keyPressed(){
+  if (keyCode === LEFT_ARROW) dir = { x: -1, y: 0 };
+  else if (keyCode === RIGHT_ARROW) dir = { x: 1, y: 0 };
+  else if (keyCode === UP_ARROW) dir = { x: 0, y: -1 };
+  else if (keyCode === DOWN_ARROW) dir = { x: 0, y: 1 };
 }
 
 function draw() {
@@ -35,9 +54,9 @@ function draw() {
   // }
 
   //modifica a posição x da cobra
-  snake.x += 1;
+  snake.x += dir.x;
   //modifica a posição y da cobra
-  snake.y += 1;
+  snake.y += dir.y;
 
   //muda a cor;
   //fill(R, G, B)
