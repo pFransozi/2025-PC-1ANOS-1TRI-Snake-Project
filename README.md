@@ -29,3 +29,6 @@ O desenvolvimento do jogo é estruturado em etapas progressivas, cada uma focada
 ## Tecnologias utilizadas
 
 [P5.js](https://p5js.org/): biblioteca gráfica JavaScript simples e intuitiva, excelente para projetos educacionais e artísticos.
+
+## Tutorial
+Você pode consultar um tutorial neste [link](tutorial/tutorial.md)

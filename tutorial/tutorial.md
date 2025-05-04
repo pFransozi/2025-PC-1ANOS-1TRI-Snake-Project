@@ -269,13 +269,3 @@ Pontuação aparece no canto ✨
 - **Obstáculos**: desenhe blocos fixos e trate colisão.
 
 ---
-
-### Parabéns! 🎉
-
-Você passou de **tela vazia** a **Snake completo**, aprendendo:
-
-- Laços `for`, vetores para posições, eventos de teclado.  
-- Como o `draw()` atualiza a animação.  
-- Lógica de crescimento, colisão e pontuação.
-
-Agora experimente suas próprias ideias – é assim que se vira mestre em programação!

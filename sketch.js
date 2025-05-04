@@ -87,7 +87,7 @@ function grade() {
   }
 }
 
-// ----- HUD DE PONTOS ----------------------------
+// ----- PONTOS ----------------------------
 function mostrarScore() {
   fill(0);
   textSize(1);
