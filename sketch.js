@@ -1,8 +1,3 @@
-/**************************************************
- *  Jogo Snake em p5.js – versão didática         *
- *  Cole todo este código no arquivo sketch.js    *
- **************************************************/
-
 // ----- CONFIGURAÇÕES GERAIS ---------------------
 const tam = 20;           // lado de cada quadrado (20 px)
 let colunas, linhas;      // calculado no setup()
