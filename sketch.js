@@ -1,127 +1,156 @@
-// Snake Game Example with P5.js
+/**************************************************
+ *  Jogo Snake em p5.js – versão didática         *
+ *  Cole todo este código no arquivo sketch.js    *
+ **************************************************/
 
-let snake;
-let food;
-let resolution = 20;
-let w, h;
-let gameOver = false;
+// ----- CONFIGURAÇÕES GERAIS ---------------------
+const tam = 20;           // lado de cada quadrado (20 px)
+let colunas, linhas;      // calculado no setup()
+let pontos = 0;           // contador de pontuação
 
-function setup() {
-  createCanvas(600, 400);
-  frameRate(10);
-  w = floor(width / resolution);
-  h = floor(height / resolution);
-  snake = new Snake();
-  foodLocation();
-}
+// ----- OBJETO COBRA -----------------------------
+let cobra;
 
-function foodLocation() {
-  food = createVector(floor(random(w)), floor(random(h)));
-}
-
-function keyPressed() {
-  if (keyCode === LEFT_ARROW && snake.xdir !== 1) snake.setDir(-1, 0);
-  else if (keyCode === RIGHT_ARROW && snake.xdir !== -1) snake.setDir(1, 0);
-  else if (keyCode === DOWN_ARROW && snake.ydir !== -1) snake.setDir(0, 1);
-  else if (keyCode === UP_ARROW && snake.ydir !== 1) snake.setDir(0, -1);
-  
-  if (key === ' ' && gameOver) {
-    resetGame();
-  }
-}
-
-function draw() {
-  scale(resolution);
-  background(220);
-
-  if (!gameOver) {
-    if (snake.eat(food)) foodLocation();
-    snake.update();
-    snake.show();
-    if (snake.endGame()) {
-      gameOver = true;
-    }
-
-    // Draw food
-    noStroke();
-    fill(255, 0, 0);
-    rect(food.x, food.y, 1, 1);
-
-    // Score
-    fill(0);
-    textSize(1);
-    text('Score: ' + (snake.body.length - 1), 1, 1);
-  } else {
-    fill(255, 0, 0);
-    textSize(2);
-    textAlign(CENTER);
-    text('Game Over!', w / 2, h / 2);
-    textSize(1);
-    text('Score: ' + (snake.body.length - 1), w / 2, h / 2 + 2);
-    text('Press SPACE to restart', w / 2, h / 2 + 4);
-  }
-}
-
-function resetGame() {
-  snake = new Snake();
-  foodLocation();
-  gameOver = false;
-}
-
-class Snake {
+class Cobra {
   constructor() {
-    this.body = [createVector(floor(w / 2), floor(h / 2))];
-    this.xdir = 0;
-    this.ydir = 0;
-    this.grow = false;
+    this.corpo   = [createVector(5, 5)]; // começa no meio
+    this.xdir    = 1;   // direção inicial → direita
+    this.ydir    = 0;
+    this.crescer = false;
   }
 
-  setDir(x, y) {
+  setDir(x, y) {                      // muda direção
     this.xdir = x;
     this.ydir = y;
   }
 
-  update() {
-    let head = this.body[this.body.length - 1].copy();
+  atualizar() {                       // avança 1 passo
+    const head = this.corpo.at(-1).copy();
     head.x += this.xdir;
     head.y += this.ydir;
-    this.body.push(head);
+    this.corpo.push(head);
 
-    if (!this.grow) {
-      this.body.shift();
-    }
-    this.grow = false;
+    if (!this.crescer) this.corpo.shift(); // remove cauda
+    this.crescer = false;                  // reseta bandeira
   }
 
-  show() {
-    fill(0, 100, 0);
-    for (let part of this.body) {
-      rect(part.x, part.y, 1, 1);
-    }
+  mostrar() {                         // desenha cada segmento
+    fill(0, 150, 0);
+    noStroke();
+    for (const p of this.corpo) rect(p.x, p.y, 1, 1);
   }
 
-  eat(pos) {
-    let head = this.body[this.body.length - 1];
-    if (head.x === pos.x && head.y === pos.y) {
-      this.grow = true;
+  comer(alvo) {                       // colisão com comida?
+    const h = this.corpo.at(-1);
+    if (h.x === alvo.x && h.y === alvo.y) {
+      this.crescer = true;
+      pontos++;
       return true;
     }
     return false;
   }
 
-  endGame() {
-    let head = this.body[this.body.length - 1];
-    // Wall collision
-    if (head.x < 0 || head.x >= w || head.y < 0 || head.y >= h) {
-      return true;
-    }
-    // Self collision
-    for (let i = 0; i < this.body.length - 1; i++) {
-      let part = this.body[i];
-      if (part.x === head.x && part.y === head.y) {
-        return true;
-      }
+  morreu() {                          // parede ou próprio corpo
+    const h = this.corpo.at(-1);
+
+    // parede
+    if (h.x < 0 || h.x >= colunas || h.y < 0 || h.y >= linhas) return true;
+
+    // corpo
+    for (let i = 0; i < this.corpo.length - 1; i++) {
+      const p = this.corpo[i];
+      if (p.x === h.x && p.y === h.y) return true;
     }
     return false;
   }
+}
+
+// ----- COMIDA -----------------------------------
+let comida;
+
+function novaComida() {
+  comida = createVector(
+    floor(random(colunas)),
+    floor(random(linhas))
+  );
+}
+
+function desenharComida() {
+  fill(255, 0, 0);
+  noStroke();
+  rect(comida.x, comida.y, 1, 1);
+}
+
+// ----- GRADE (APENAS VISUAL) --------------------
+function grade() {
+  stroke(200);
+  for (let x = 0; x < width; x += tam) {
+    for (let y = 0; y < height; y += tam) {
+      noFill();
+      rect(x, y, tam, tam);
+    }
+  }
+}
+
+// ----- HUD DE PONTOS ----------------------------
+function mostrarScore() {
+  fill(0);
+  textSize(1);
+  textAlign(LEFT, TOP);
+  text('Score: ' + pontos, 0.5, 0.5);
+}
+
+// ----- FUNÇÕES PRINCIPAIS p5.js -----------------
+function setup() {
+  createCanvas(600, 400);
+  frameRate(10);
+
+  colunas = floor(width / tam);
+  linhas  = floor(height / tam);
+
+  cobra = new Cobra();
+  novaComida();
+}
+
+function draw() {
+  scale(tam);           // transforma 1 unidade em 1 quadrado
+  background(220);
+
+  grade();              // desenha tabuleiro
+  desenharComida();     // desenha comida
+
+  cobra.atualizar();    // move a cobra
+
+  if (cobra.comer(comida)) novaComida(); // come → gera nova comida
+
+  cobra.mostrar();      // mostra a cobra
+  mostrarScore();       // mostra pontos
+
+  if (cobra.morreu()) { // GAME OVER
+    textSize(2);
+    fill(255, 0, 0);
+    textAlign(CENTER, CENTER);
+    text('GAME OVER', colunas / 2, linhas / 2);
+    textSize(1);
+    text('Espaço: jogar de novo', colunas / 2, linhas / 2 + 3);
+    noLoop();           // pausa o draw()
+  }
+}
+
+function keyPressed() {
+  // controle pelas setas
+  if (keyCode === LEFT_ARROW  && cobra.xdir !== 1)  cobra.setDir(-1,  0);
+  if (keyCode === RIGHT_ARROW && cobra.xdir !== -1) cobra.setDir( 1,  0);
+  if (keyCode === UP_ARROW    && cobra.ydir !== 1)  cobra.setDir( 0, -1);
+  if (keyCode === DOWN_ARROW  && cobra.ydir !== -1) cobra.setDir( 0,  1);
+
+  // reiniciar (barra de espaço) se estava parado
+  if (key === ' ') reiniciar();
+}
+
+function reiniciar() {
+  cobra = new Cobra();
+  pontos = 0;
+  novaComida();
+  loop();               // volta a executar draw()
 }
